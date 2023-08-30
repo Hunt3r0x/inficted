@@ -5,9 +5,10 @@ new Vue({
     },
     data: {
         search: '',
-        jsonData: [], // This will hold the fetched JSON data
-        perPage: 10, // Number of entries per page (initial value)
-        currentPage: 1
+        jsonData: [],
+        perPage: 10,
+        currentPage: 1,
+        maxDisplayedPages: 5
     },
     computed: {
         filteredData() {
@@ -15,9 +16,9 @@ new Vue({
                 return this.jsonData;
             }
             return this.jsonData.filter(entry =>
-                Object.values(entry).some(value =>
-                    String(value).toLowerCase().includes(this.search.toLowerCase())
-                )
+                entry.post_title.toLowerCase().includes(this.search.toLowerCase()) ||
+                entry.published.toLowerCase().includes(this.search.toLowerCase()) ||
+                entry.group_name.toLowerCase().includes(this.search.toLowerCase())
             );
         },
         pageCount() {
@@ -30,22 +31,21 @@ new Vue({
         },
         displayedPageNumbers() {
             const totalPageNumbers = this.pageCount;
-            const maxDisplayedPages = 5; // Adjust this number as needed
-            const middlePage = Math.ceil(maxDisplayedPages / 2);
+            const middlePage = Math.ceil(this.maxDisplayedPages / 2);
             let startPage, endPage;
 
-            if (totalPageNumbers <= maxDisplayedPages) {
+            if (totalPageNumbers <= this.maxDisplayedPages) {
                 startPage = 1;
                 endPage = totalPageNumbers;
             } else if (this.currentPage <= middlePage) {
                 startPage = 1;
-                endPage = maxDisplayedPages;
+                endPage = this.maxDisplayedPages;
             } else if (this.currentPage > totalPageNumbers - middlePage) {
-                startPage = totalPageNumbers - maxDisplayedPages + 1;
+                startPage = totalPageNumbers - this.maxDisplayedPages + 1;
                 endPage = totalPageNumbers;
             } else {
-                startPage = this.currentPage - Math.floor(middlePage / 2);
-                endPage = this.currentPage + Math.floor(middlePage / 2);
+                startPage = this.currentPage - Math.floor(this.maxDisplayedPages / 2);
+                endPage = this.currentPage + Math.floor(this.maxDisplayedPages / 2);
             }
 
             return Array.from({ length: (endPage - startPage) + 1 }, (_, i) => startPage + i);
@@ -62,8 +62,7 @@ new Vue({
         }
     },
     mounted() {
-        // Fetch JSON data and set to jsonData
-        fetch('data.json') // Replace with your actual JSON data URL
+        fetch('https://raw.githubusercontent.com/JMousqueton/ransomware.live/main/posts.json') // Replace with your actual JSON data URL
             .then(response => response.json())
             .then(data => {
                 this.jsonData = data.map(entry => ({ ...entry, expanded: false })); // Set fetched JSON data to jsonData

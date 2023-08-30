@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zLeaks</title>
+    <title>JSON Data Display</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container" id="app">
-        <h1>search for leakes</h1>
+        <h1>JSON Data Display</h1>
         <div class="search-container">
             <input type="text" v-model="search" placeholder="Search...">
         </div>
         <div class="card-container">
-            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)">
+            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)" :class="{ expanded: entry.expanded }">
                 <div class="card-title">{{ entry.post_title }}</div>
                 <div class="card-info">Group: {{ entry.group_name }}</div>
-                <!-- <div v-if="entry.description" class="card-info card-description">Description: {{ entry.description }}</div> -->
+                <div class="card-info card-description" v-if="entry.expanded">{{ entry.description }}</div>
                 <div class="card-info">Published: {{ entry.published }}</div>
                 <div v-if="entry.post_url" class="card-url">
                     <a :href="entry.post_url" target="_blank">leakURL</a>
                 </div>
             </div>
         </div>
-        
         <ul class="pagination">
             <li>
                 <a href="#" @click.prevent="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</a>
@@ -34,98 +33,22 @@
             <li>
                 <a href="#" @click.prevent="changePage(currentPage + 1)" :disabled="currentPage === pageCount">Next</a>
             </li>
-            <li class="per-page-container">
-                <label class="per-page-label" for="per-page-select">Results:</label>
-                <select id="per-page-select" class="per-page-select" v-model="perPage">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="200">200</option>
-                    <option value="1000">1000</option>
-                    <option value="10000000">All</option>
-                </select>
-            </li>
         </ul>
+        <div class="per-page-container">
+            <label class="per-page-label" for="per-page-select">Results per page:</label>
+            <select id="per-page-select" class="per-page-select" v-model="perPage">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="1000">1000</option>
+                <option value="100000000">All</option>
+            </select>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuejs-paginate@2.1.0"></script>
-    <script>
-        new Vue({
-            el: '#app',
-            components: {
-                paginate: VuejsPaginate
-            },
-            data: {
-                search: '',
-                jsonData: [], // This will hold the fetched JSON data
-                perPage: 10, // Number of entries per page (initial value)
-                currentPage: 1
-            },
-            computed: {
-                filteredData() {
-                    if (!this.search) {
-                        return this.jsonData;
-                    }
-                    return this.jsonData.filter(entry =>
-                        Object.values(entry).some(value =>
-                            String(value).toLowerCase().includes(this.search.toLowerCase())
-                        )
-                    );
-                },
-                pageCount() {
-                    return Math.ceil(this.filteredData.length / this.perPage);
-                },
-                paginatedData() {
-                    const start = (this.currentPage - 1) * this.perPage;
-                    const end = start + this.perPage;
-                    return this.filteredData.slice(start, end);
-                },
-                displayedPageNumbers() {
-                    const totalPageNumbers = this.pageCount;
-                    const maxDisplayedPages = 5; // Adjust this number as needed
-                    const middlePage = Math.ceil(maxDisplayedPages / 2);
-                    let startPage, endPage;
-
-                    if (totalPageNumbers <= maxDisplayedPages) {
-                        startPage = 1;
-                        endPage = totalPageNumbers;
-                    } else if (this.currentPage <= middlePage) {
-                        startPage = 1;
-                        endPage = maxDisplayedPages;
-                    } else if (this.currentPage > totalPageNumbers - middlePage) {
-                        startPage = totalPageNumbers - maxDisplayedPages + 1;
-                        endPage = totalPageNumbers;
-                    } else {
-                        startPage = this.currentPage - Math.floor(middlePage / 2);
-                        endPage = this.currentPage + Math.floor(middlePage / 2);
-                    }
-
-                    return Array.from({ length: (endPage - startPage) + 1 }, (_, i) => startPage + i);
-                }
-            },
-            methods: {
-                changePage(page) {
-                    if (page >= 1 && page <= this.pageCount) {
-                        this.currentPage = page;
-                    }
-                },
-                toggleCard(entry) {
-                    entry.expanded = !entry.expanded;
-                }
-            },
-            mounted() {
-                // Fetch JSON data and set to jsonData
-                fetch('data.json') // Replace with your actual JSON data URL
-                    .then(response => response.json())
-                    .then(data => {
-                        this.jsonData = data.map(entry => ({ ...entry, expanded: false })); // Set fetched JSON data to jsonData
-                    })
-                    .catch(error => {
-                        console.error('Error fetching JSON data:', error);
-                    });
-            }
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
