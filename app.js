@@ -16,11 +16,9 @@ new Vue({
                 return this.jsonData;
             }
             return this.jsonData.filter(entry =>
-                entry.post_title.toLowerCase().includes(this.search.toLowerCase()) ||
-                entry.published.toLowerCase().includes(this.search.toLowerCase()) ||
-                entry.post_url.toLowerCase().includes(this.search.toLowerCase()) ||
-                entry.description.toLowerCase().includes(this.search.toLowerCase()) ||
-                entry.group_name.toLowerCase().includes(this.search.toLowerCase())
+                Object.values(entry).some(value =>
+                    String(value).toLowerCase().includes(this.search.toLowerCase())
+                )
             );
         },
         pageCount() {
