@@ -1,0 +1,113 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+.container {
+    max-width: 1000px;
+    width: 90%;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center; /* Center-align content */
+}
+.search-container {
+    margin: 0 auto 20px; /* Center-align the search input and add margin */
+    max-width: 300px; /* Limit the width of the search input */
+}
+input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    text-align: left; /* Reset text alignment for card content */
+}
+.card {
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.card-info {
+    margin-bottom: 8px;
+}
+.card-description {
+    color: #777;
+}
+.card-url {
+    display: flex;
+    align-items: center;
+}
+.card-url a {
+    color: #007bff;
+    text-decoration: none;
+    margin-left: 5px;
+}
+.alternative-url {
+    color: #777;
+    margin-left: 5px;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+.pagination li {
+    margin: 0 5px;
+    font-size: 16px;
+}
+.pagination a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.pagination .active {
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+}
+.per-page-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+.per-page-label {
+    margin-right: 10px;
+}
+.per-page-select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
