@@ -128,13 +128,12 @@
                 <div class="card-info">Group: {{ entry.group_name }}</div>
                 <div v-if="entry.description" class="card-info card-description">Description: {{ entry.description }}</div>
                 <div class="card-info">Published: {{ entry.published }}</div>
-                <div class="card-url" v-if="entry.post_url">
-                    <div class="card-info">URL:</div>
-                    <a :href="entry.post_url" target="_blank">{{ entry.post_url }}</a>
-                    <span class="alternative-url" v-if="entry.post_url_alternative">({{ entry.post_url_alternative }})</span>
+                <div v-if="entry.post_url" class="card-url">
+                    <a :href="entry.post_url" target="_blank">leakURL</a>
                 </div>
             </div>
         </div>
+        
         <ul class="pagination">
             <li>
                 <a href="#" @click.prevent="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</a>
