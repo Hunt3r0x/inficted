@@ -6,7 +6,7 @@ new Vue({
     data: {
         search: '',
         jsonData: [], // This will hold the fetched JSON data
-        perPage: 10, // Number of entries per page (initial value)
+        perPage: 6, // Number of entries per page (initial value)
         currentPage: 1,
         maxDisplayedPages: 5 // Maximum number of displayed page numbers
     },

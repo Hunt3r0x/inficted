@@ -8,9 +8,8 @@
 </head>
 <body>
     <div class="container" id="app">
-        <h1>Search for leakes</h1>
         <div class="search-container">
-            <input type="text" v-model="search" placeholder="Search...">
+            <input type="text" v-model="search" placeholder="search for leakes">
         </div>
         <div class="card-container">
             <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)" :class="{ expanded: entry.expanded }">
@@ -37,6 +36,7 @@
         <div class="per-page-container">
             <label class="per-page-label" for="per-page-select">Results per page:</label>
             <select id="per-page-select" class="per-page-select" v-model="perPage">
+                <option value="6">6</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
