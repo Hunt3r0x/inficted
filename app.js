@@ -5,10 +5,10 @@ new Vue({
     },
     data: {
         search: '',
-        jsonData: [],
-        perPage: 10,
+        jsonData: [], // This will hold the fetched JSON data
+        perPage: 10, // Number of entries per page (initial value)
         currentPage: 1,
-        maxDisplayedPages: 5
+        maxDisplayedPages: 5 // Maximum number of displayed page numbers
     },
     computed: {
         filteredData() {
@@ -62,7 +62,8 @@ new Vue({
         }
     },
     mounted() {
-        fetch('https://raw.githubusercontent.com/JMousqueton/ransomware.live/main/posts.json') // Replace with your actual JSON data URL
+        // Fetch JSON data and set to jsonData
+        fetch('data.json') // Replace with your actual JSON data URL
             .then(response => response.json())
             .then(data => {
                 this.jsonData = data.map(entry => ({ ...entry, expanded: false })); // Set fetched JSON data to jsonData
