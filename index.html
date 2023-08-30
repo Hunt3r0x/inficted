@@ -10,29 +10,38 @@
             margin: 0;
             padding: 20px;
         }
-        h1 {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .search-container {
             margin-bottom: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         th, td {
-            padding: 10px;
+            padding: 12px 10px;
             border: 1px solid #ccc;
             text-align: left;
         }
         input {
-            padding: 5px;
+            padding: 10px;
             width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <div id="app">
+    <div class="container" id="app">
         <h1>JSON Data Display</h1>
-        <label for="search">Search:</label>
-        <input type="text" v-model="search" id="search" placeholder="Search by post title">
+        <div class="search-container">
+            <input type="text" v-model="search" id="search" placeholder="Enter post title...">
+        </div>
         <table>
             <thead>
                 <tr>
