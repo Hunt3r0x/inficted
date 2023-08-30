@@ -63,11 +63,10 @@ new Vue({
         }
     },
     mounted() {
-        // Fetch JSON data and set to jsonData
-        fetch('data.json') // Replace with your actual JSON data URL
+        fetch('data.json')
             .then(response => response.json())
             .then(data => {
-                this.jsonData = data.map(entry => ({ ...entry, expanded: false })); // Set fetched JSON data to jsonData
+                this.jsonData = data.map(entry => ({ ...entry, expanded: false }));
             })
             .catch(error => {
                 console.error('Error fetching JSON data:', error);
