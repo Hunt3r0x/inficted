@@ -36,33 +36,46 @@
         }
         .card-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
         .card {
-            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
-            transition: transform 0.2s;
         }
-        .card.expanded {
-            transform: translateY(-10px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .card-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        .card-description {
-            display: none;
-            font-size: 14px;
-            margin-top: 10px;
+        .card-info {
+            margin-bottom: 8px;
         }
-        .card.expanded .card-description {
-            display: block;
+        .card-description {
+            color: #777;
+        }
+        .card-url {
+            display: flex;
+            align-items: center;
+        }
+        .card-url a {
+            color: #007bff;
+            text-decoration: none;
+            margin-left: 5px;
+        }
+        .alternative-url {
+            color: #777;
+            margin-left: 5px;
         }
         .pagination {
             display: flex;
@@ -110,14 +123,15 @@
             <input type="text" v-model="search" placeholder="Search...">
         </div>
         <div class="card-container">
-            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)" :class="{ expanded: entry.expanded }">
+            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)">
                 <div class="card-title">{{ entry.post_title }}</div>
-                <div class="card-description">{{ entry.description }}</div>
                 <div class="card-info">Group: {{ entry.group_name }}</div>
+                <div v-if="entry.description" class="card-info card-description">Description: {{ entry.description }}</div>
                 <div class="card-info">Published: {{ entry.published }}</div>
-                <div class="card-url">
+                <div class="card-url" v-if="entry.post_url">
                     <div class="card-info">URL:</div>
-                    <a v-if="entry.post_url" :href="entry.post_url" target="_blank">{{ entry.post_url }}</a>
+                    <a :href="entry.post_url" target="_blank">{{ entry.post_url }}</a>
+                    <span class="alternative-url" v-if="entry.post_url_alternative">({{ entry.post_url_alternative }})</span>
                 </div>
             </div>
         </div>
@@ -140,6 +154,7 @@
                 <option value="50">50</option>
                 <option value="100">100</option>
                 <option value="200">200</option>
+                <option value="1000">1000</option>
             </select>
         </div>
     </div>
@@ -164,7 +179,7 @@
                     }
                     return this.jsonData.filter(entry =>
                         Object.values(entry).some(value =>
-                            value.toLowerCase().includes(this.search.toLowerCase())
+                            String(value).toLowerCase().includes(this.search.toLowerCase())
                         )
                     );
                 },
@@ -210,6 +225,7 @@
                 }
             },
             mounted() {
+                // Fetch JSON data and set to jsonData
                 fetch('data.json') // Replace with your actual JSON data URL
                     .then(response => response.json())
                     .then(data => {
