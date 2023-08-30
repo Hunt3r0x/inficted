@@ -4,13 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Data Display</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        input {
+            padding: 5px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <h1>JSON Data Display</h1>
         <label for="search">Search:</label>
-        <input type="text" v-model="search" id="search">
+        <input type="text" v-model="search" id="search" placeholder="Search by post title">
         <table>
             <thead>
                 <tr>
@@ -30,6 +52,7 @@
             </tbody>
         </table>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
     <script>
         new Vue({
             el: '#app',
