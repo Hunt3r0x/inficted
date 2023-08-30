@@ -63,7 +63,7 @@ new Vue({
         }
     },
     mounted() {
-        fetch('.fuck/data.json')
+        fetch('https://raw.githubusercontent.com/JMousqueton/ransomware.live/main/posts.json')
             .then(response => response.json())
             .then(data => {
                 this.jsonData = data.map(entry => ({ ...entry, expanded: false }));
