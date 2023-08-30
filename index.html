@@ -145,18 +145,19 @@
             <li>
                 <a href="#" @click.prevent="changePage(currentPage + 1)" :disabled="currentPage === pageCount">Next</a>
             </li>
+            <li class="per-page-container">
+                <label class="per-page-label" for="per-page-select">Results:</label>
+                <select id="per-page-select" class="per-page-select" v-model="perPage">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="1000">1000</option>
+                    <option value="10000000">All</option>
+                </select>
+            </li>
         </ul>
-        <div class="per-page-container">
-            <label class="per-page-label" for="per-page-select">Per Page:</label>
-            <select id="per-page-select" class="per-page-select" v-model="perPage">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="200">200</option>
-                <option value="1000">1000</option>
-            </select>
-        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuejs-paginate@2.1.0"></script>
