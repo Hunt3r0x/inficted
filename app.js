@@ -64,7 +64,7 @@ new Vue({
         }
     },
     mounted() {
-        fetch('fuck/data.json')
+        fetch('data.json')
             .then(response => response.json())
             .then(data => {
                 this.jsonData = data.map(entry => ({ ...entry, expanded: false }));
