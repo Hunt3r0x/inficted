@@ -4,64 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Data Display</title>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
 </head>
 <body>
-    <h1>JSON Data Display</h1>
-    <label for="search">Search:</label>
-    <input type="text" id="search">
-    <table id="data-table" class="display">
-        <thead>
-            <tr>
-                <th>Post Title</th>
-                <th>Group Name</th>
-                <th>Discovered</th>
-                <th>Published</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Sample Title 1</td>
-                <td>Group A</td>
-                <td>2023-01-01</td>
-                <td>2023-01-02</td>
-            </tr>
-            <tr>
-                <td>Sample Title 2</td>
-                <td>Group B</td>
-                <td>2023-02-01</td>
-                <td>2023-02-02</td>
-            </tr>
-            <!-- Add more sample rows if needed -->
-        </tbody>
-    </table>
+    <div id="app">
+        <h1>JSON Data Display</h1>
+        <label for="search">Search:</label>
+        <input type="text" v-model="search" id="search">
+        <table>
+            <thead>
+                <tr>
+                    <th>Post Title</th>
+                    <th>Group Name</th>
+                    <th>Discovered</th>
+                    <th>Published</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="entry in filteredData" :key="entry.post_title">
+                    <td>{{ entry.post_title }}</td>
+                    <td>{{ entry.group_name }}</td>
+                    <td>{{ entry.discovered }}</td>
+                    <td>{{ entry.published }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <script>
-        $(document).ready(function() {
-            var table = $('#data-table').DataTable({
-                columns: [
-                    { data: 'post_title' },
-                    { data: 'group_name' },
-                    { data: 'discovered' },
-                    { data: 'published' }
-                ],
-                order: [[0, 'asc']]
-            });
-
-            $('#search').on('keyup change clear', function () {
-                table.search(this.value).draw();
-            });
+        new Vue({
+            el: '#app',
+            data: {
+                search: '',
+                jsonData: [] // This will hold the fetched JSON data
+            },
+            computed: {
+                filteredData() {
+                    return this.jsonData.filter(entry =>
+                        entry.post_title.toLowerCase().includes(this.search.toLowerCase())
+                    );
+                }
+            },
+            mounted() {
+                // Fetch JSON data using fetch() API
+                fetch('data.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.jsonData = data; // Set fetched JSON data to jsonData
+                    })
+                    .catch(error => {
+                        console.error('Error fetching JSON data:', error);
+                    });
+            }
         });
     </script>
 </body>
