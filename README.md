@@ -17,8 +17,6 @@ Data breaches and leaks can have serious consequences, ranging from financial lo
 
 - **Open Source Data Sources:** The engine leverages open-source data sources to gather information about data breaches and leaks. These sources are continuously updated to ensure the latest information is available.
 
-- **Customizable Alerts:** You can configure the tool to send alerts to your preferred channels, such as email, Slack, or SMS, whenever a new breach or leak is detected that matches your criteria.
-
 - **Keyword Search:** You can specify keywords or phrases related to your organization or interests. The engine will search for these keywords in breach descriptions and notify you when matches are found.
 
 - **Historical Data:** [inficted0](https://hunt3r0x.github.io/inficted/index.html) maintains a historical record of breaches and leaks, allowing you to track trends and assess the potential impact over time.
