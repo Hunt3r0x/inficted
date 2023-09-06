@@ -73,11 +73,11 @@ input {
     overflow: hidden;
 }
 
-.card.expanded .card-description {
+/* .card.expanded .card-description {
     overflow: auto;
     user-select: text;
     white-space: pre-wrap;
-}
+} */
 
 .card:hover {
     transform: translateY(-5px);
