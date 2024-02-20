@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zLeaks</title>
     <link rel="stylesheet" href="fuck/css/styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
+
 <body>
     <div class="container" id="app">
         <div class="search-container">
             <input type="text" v-model="search" placeholder="search for leaks">
         </div>
         <div class="card-container">
-            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)" :class="{ expanded: entry.expanded }">
+            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)"
+                :class="{ expanded: entry.expanded }">
                 <div class="card-title">{{ entry.post_title }}</div>
                 <div class="card-info">Group: {{ entry.group_name }}</div>
                 <div class="card-info card-description" v-if="entry.expanded">{{ entry.description }}</div>
@@ -26,7 +30,8 @@
             <li>
                 <a href="#" @click.prevent="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</a>
             </li>
-            <li v-for="pageNumber in displayedPageNumbers" :key="pageNumber" :class="{ active: pageNumber === currentPage }">
+            <li v-for="pageNumber in displayedPageNumbers" :key="pageNumber"
+                :class="{ active: pageNumber === currentPage }">
                 <a href="#" @click.prevent="changePage(pageNumber)">{{ pageNumber }}</a>
             </li>
             <li>
@@ -51,4 +56,5 @@
     <script src="fuck/vue/vuejs-paginate.js"></script>
     <script src="fuck/js/app.js"></script>
 </body>
+
 </html>

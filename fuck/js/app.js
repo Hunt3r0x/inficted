@@ -77,7 +77,7 @@ new Vue({
                 });
         },
         useLocalData() {
-            fetch('/fuck/js/db/posts.json') // Assuming data.json is located at /db/data.json
+            fetch('https://raw.githubusercontent.com/Hunt3r0x/inficted/main/fuck/js/db/posts.json') // Assuming data.json is located at /db/data.json
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Local data fetch failed');
