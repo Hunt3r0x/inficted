@@ -59,16 +59,40 @@ new Vue({
         },
         toggleCard(entry) {
             entry.expanded = !entry.expanded;
+        },
+        fetchData() {
+            fetch('https://data.ransomware.live/posts.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.jsonData = data.map(entry => ({ ...entry, expanded: false }));
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON data, using local data:', error);
+                    this.useLocalData();
+                });
+        },
+        useLocalData() {
+            fetch('/fuck/js/db/posts.json') // Assuming data.json is located at /db/data.json
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Local data fetch failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.jsonData = data.map(entry => ({ ...entry, expanded: false }));
+                })
+                .catch(error => {
+                    console.error('Error fetching local data:', error);
+                });
         }
     },
     mounted() {
-        fetch('https://data.ransomware.live/posts.json')
-            .then(response => response.json())
-            .then(data => {
-                this.jsonData = data.map(entry => ({ ...entry, expanded: false }));
-            })
-            .catch(error => {
-                console.error('Error fetching JSON data:', error);
-            });
+        this.fetchData();
     }
 });
