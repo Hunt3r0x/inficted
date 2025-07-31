@@ -4,53 +4,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zLeaks</title>
-    <link rel="stylesheet" href="resources/css/styles.css">
+    <title>zLeaks - Ransomware Intelligence Platform</title>
+    <meta name="description" content="Professional ransomware intelligence platform tracking latest data breaches and security incidents">
+    <meta name="keywords" content="ransomware, cybersecurity, data breaches, security intelligence">
+    <meta name="author" content="zLeaks Team">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="resources/css/styles.css">
 </head>
 
 <body>
-    <div class="container" id="app">
-        <div class="search-container">
-            <input type="text" v-model="search" placeholder="search for leaks">
+    <div class="app-container" id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="brand">
+                    <i class="fas fa-shield-virus brand-icon"></i>
+                    <h1 class="brand-title">zLeaks</h1>
+                    <span class="brand-subtitle">Ransomware Intelligence Platform</span>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ totalEntries }}</span>
+                        <span class="stat-label">Total Incidents</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ activeGroups }}</span>
+                        <span class="stat-label">Active Groups</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" v-model="search" placeholder="Search for incidents, groups, or victims..." class="search-input">
+                    <button v-if="search" @click="clearSearch" class="clear-search" title="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label class="filter-label">Group:</label>
+                    <select v-model="selectedGroup" class="filter-select">
+                        <option value="">All Groups</option>
+                        <option v-for="group in uniqueGroups" :key="group" :value="group">{{ group }}</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Sort by:</label>
+                    <select v-model="sortBy" class="filter-select">
+                        <option value="published">Date Published</option>
+                        <option value="post_title">Title</option>
+                        <option value="group_name">Group Name</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Order:</label>
+                    <select v-model="sortOrder" class="filter-select">
+                        <option value="desc">Newest First</option>
+                        <option value="asc">Oldest First</option>
+                    </select>
+                </div>
+                
+                <button @click="exportData" class="export-btn" title="Export filtered data">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+            </div>
         </div>
-        <div class="card-container">
-            <div class="card" v-for="entry in paginatedData" :key="entry.post_title" @click="toggleCard(entry)"
-                :class="{ expanded: entry.expanded }">
-                <div class="card-title">{{ entry.post_title }}</div>
-                <div class="card-info">Group: {{ entry.group_name }}</div>
-                <div class="card-info card-description" v-if="entry.expanded">{{ entry.description }}</div>
-                <div class="card-info">Published: {{ entry.published }}</div>
-                <div v-if="entry.post_url" class="card-url">
-                    <a :href="entry.post_url" target="_blank">leakURL</a>
+
+        <!-- Loading State -->
+        <div v-if="loading" class="loading-container">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <p class="loading-text">Loading security incidents...</p>
+        </div>
+
+        <!-- Results Info -->
+        <div v-if="!loading" class="results-info">
+            <p class="results-text">
+                Showing {{ paginatedData.length }} of {{ filteredData.length }} incidents
+                <span v-if="search || selectedGroup"> (filtered)</span>
+            </p>
+        </div>
+        <!-- Main Content -->
+        <div v-if="!loading" class="main-content">
+            <!-- No Results -->
+            <div v-if="filteredData.length === 0" class="no-results">
+                <i class="fas fa-search-minus no-results-icon"></i>
+                <h3 class="no-results-title">No incidents found</h3>
+                <p class="no-results-text">Try adjusting your search terms or filters</p>
+            </div>
+
+            <!-- Cards Grid -->
+            <div v-else class="cards-grid">
+                <div class="incident-card" 
+                     v-for="entry in paginatedData" 
+                     :key="entry.post_title"
+                     :class="{ 'expanded': entry.expanded }"
+                     @click="toggleCard(entry)">
+                    
+                    <div class="card-header">
+                        <div class="card-title">{{ entry.post_title }}</div>
+                        <div class="card-badges">
+                            <span class="group-badge" :class="getGroupClass(entry.group_name)">
+                                {{ entry.group_name }}
+                            </span>
+                            <span class="date-badge">
+                                {{ formatDate(entry.published) }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="card-info">
+                            <div class="info-item">
+                                <i class="fas fa-calendar-alt info-icon"></i>
+                                <span class="info-label">Published:</span>
+                                <span class="info-value">{{ formatDateFull(entry.published) }}</span>
+                            </div>
+                            
+                            <div v-if="entry.description && entry.expanded" class="info-item description">
+                                <i class="fas fa-info-circle info-icon"></i>
+                                <span class="info-label">Details:</span>
+                                <div class="info-value description-text">{{ entry.description }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button v-if="entry.post_url" 
+                                    @click.stop="openLink(entry.post_url)" 
+                                    class="action-btn primary"
+                                    title="View original post">
+                                <i class="fas fa-external-link-alt"></i>
+                                View Source
+                            </button>
+                            
+                            <button @click.stop="shareIncident(entry)" 
+                                    class="action-btn secondary"
+                                    title="Share incident">
+                                <i class="fas fa-share-alt"></i>
+                                Share
+                            </button>
+                            
+                            <button @click.stop="toggleCard(entry)" 
+                                    class="action-btn secondary expand-btn"
+                                    :title="entry.expanded ? 'Collapse' : 'Expand'">
+                                <i class="fas" :class="entry.expanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <ul class="pagination">
-            <li>
-                <a href="#" @click.prevent="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</a>
-            </li>
-            <li v-for="pageNumber in displayedPageNumbers" :key="pageNumber"
-                :class="{ active: pageNumber === currentPage }">
-                <a href="#" @click.prevent="changePage(pageNumber)">{{ pageNumber }}</a>
-            </li>
-            <li>
-                <a href="#" @click.prevent="changePage(currentPage + 1)" :disabled="currentPage === pageCount">Next</a>
-            </li>
-        </ul>
-        <div class="per-page-container">
-            <label class="per-page-label" for="per-page-select">Results</label>
-            <select id="per-page-select" class="per-page-select" v-model="perPage">
-                <option value="6">6</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="200">200</option>
-                <option value="1000">1000</option>
-                <option value="100000000">All</option>
-            </select>
+        <!-- Pagination -->
+        <div v-if="!loading && filteredData.length > 0" class="pagination-container">
+            <div class="pagination-info">
+                <span class="pagination-text">
+                    Showing {{ (currentPage - 1) * perPage + 1 }} to {{ Math.min(currentPage * perPage, filteredData.length) }} 
+                    of {{ filteredData.length }} incidents
+                </span>
+            </div>
+            
+            <nav class="pagination" v-if="pageCount > 1">
+                <button class="pagination-btn" 
+                        :disabled="currentPage === 1"
+                        @click="changePage(currentPage - 1)"
+                        title="Previous page">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <button v-for="pageNumber in displayedPageNumbers" 
+                        :key="pageNumber"
+                        class="pagination-btn page-number"
+                        :class="{ active: pageNumber === currentPage }"
+                        @click="changePage(pageNumber)">
+                    {{ pageNumber }}
+                </button>
+                
+                <button class="pagination-btn" 
+                        :disabled="currentPage === pageCount"
+                        @click="changePage(currentPage + 1)"
+                        title="Next page">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </nav>
+            
+            <div class="per-page-container">
+                <label class="per-page-label" for="per-page-select">
+                    <i class="fas fa-list"></i>
+                    Per page:
+                </label>
+                <select id="per-page-select" class="per-page-select" v-model="perPage">
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="48">48</option>
+                    <option value="96">96</option>
+                    <option value="192">192</option>
+                </select>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <p class="footer-text">
+                        &copy; 2024 zLeaks - Ransomware Intelligence Platform
+                    </p>
+                    <p class="footer-disclaimer">
+                        This platform is for security research and awareness purposes only.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link">Terms of Service</a>
+                        <a href="#" class="footer-link">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
     <script src="resources/vue/vue.min.js"></script>
     <script src="resources/vue/vuejs-paginate.js"></script>
